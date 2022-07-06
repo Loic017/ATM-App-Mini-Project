@@ -1,8 +1,6 @@
-from re import A
 import time
 import random
 import json
-from tkinter import N
 
 class Bank_Account():
     def __init__(self, account_No, fName, user_password, bank_Amount=0):
