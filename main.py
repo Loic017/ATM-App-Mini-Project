@@ -2,6 +2,7 @@ from re import A
 import time
 import random
 import json
+from tkinter import N
 
 class Bank_Account():
     def __init__(self, account_No, fName, user_password, bank_Amount=0):
@@ -17,7 +18,10 @@ class Bank_Account():
         return self.fName
 
     def deposit_Money(self, amount):
-        bank_Amount += amount
+        self.bank_Amount += amount
+    
+    def withdraw_Money(self, amount):
+        self.bank_Amount -= amount
     
 def main():
     slow_text("ATM.... Press any key to continue.\n>> ")
@@ -27,7 +31,11 @@ def main():
     if nav == "C":
         create_account()
     elif nav == "L":
-        login()
+        try:
+            login()
+        except:
+            slow_text("Invalid Login.")
+            login()
     else:
         slow_text("Invalid Selection.")
 
@@ -60,7 +68,6 @@ def create_account():
     loaded[account.get_account_No()] = save_list
     save_json(loaded)
     
-
     slow_text(f"Account Created.\nThis is your account number: {account_No}\n")
     main()
 
@@ -71,13 +78,47 @@ def login():
     login_password = input()
 
     bank_data = load_json()
-    try:
-        if bank_data[account_Number]["account_password"] == (login_password.encode("utf-8").hex()):
-            print('true')
-    except:
-        print("Incorrect Login, Please Try Again.")
-        login()
     
+    if bank_data[account_Number]["account_password"] == (login_password.encode("utf-8").hex()):
+        account(account_Number, bank_data[account_Number]["account_fullname"], login_password, bank_data, bank_data[account_Number]["account_bankAmount"])
+    
+def account(number, name, password, data, amount):
+    slow_text(f"\nWelcome, {name}.")
+    slow_text("\nWould you like to...\nCheck Balance >> C\nDeposit >> D\nWithdraw >> W\nSign Out >> S")
+    navigate = input("\n>> ")
+    current_account = Bank_Account(number, name, password, amount)
+
+    bank_data = load_json()
+
+    if navigate == "D":
+        slow_text("How much would you like to deposit?")
+        input_amount = int(input("\n>> "))
+        current_account.deposit_Money(input_amount)
+        slow_text("Making the deposit......")
+        bank_data[number]["account_bankAmount"] = current_account.bank_Amount
+        save_json(bank_data)
+        slow_text("\nDeposit Completed.")
+        slow_text(f"\nYour balance is {current_account.bank_Amount}.")
+        account(number, name, password, data, amount)
+    elif navigate == "W":
+        slow_text("How much would you like to withdraw?")
+        input_amount = int(input("\n>> "))
+        current_account.withdraw_Money(input_amount)
+        slow_text("Making the withdraw......")
+        bank_data[number]["account_bankAmount"] = current_account.bank_Amount
+        save_json(bank_data)
+        slow_text("\nWithdraw Completed.")
+        slow_text(f"\nYour balance is {current_account.bank_Amount}.")
+        account(number, name, password, data, amount)
+    elif navigate == "C":
+        slow_text(f"Your balance is {current_account.bank_Amount}.")
+        account(number, name, password, data, amount)
+    elif navigate == "S":
+        slow_text("Signing out.")
+    else:
+        slow_text("Invalid input entered.")
+        account(number, name, password, data, amount)
+
 def slow_text(text):
     text = list(text)
     for i in text:
