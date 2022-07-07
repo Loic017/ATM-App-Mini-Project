@@ -89,6 +89,7 @@ def account(number, name, password, data, amount):
     bank_data = load_json()
 
     if navigate == "D":
+        bank_data = load_json()
         slow_text("How much would you like to deposit?")
         input_amount = int(input("\n>> "))
         current_account.deposit_Money(input_amount)
@@ -99,6 +100,7 @@ def account(number, name, password, data, amount):
         slow_text(f"\nYour balance is {current_account.bank_Amount}.")
         account(number, name, password, data, amount)
     elif navigate == "W":
+        bank_data = load_json()
         slow_text("How much would you like to withdraw?")
         input_amount = int(input("\n>> "))
         current_account.withdraw_Money(input_amount)
@@ -109,7 +111,9 @@ def account(number, name, password, data, amount):
         slow_text(f"\nYour balance is {current_account.bank_Amount}.")
         account(number, name, password, data, amount)
     elif navigate == "C":
-        slow_text(f"Your balance is {current_account.bank_Amount}.")
+        bank_data = load_json()
+        check_am = bank_data[number]["account_bankAmount"]
+        slow_text(f"Your balance is {check_am}.")
         account(number, name, password, data, amount)
     elif navigate == "S":
         slow_text("Signing out.")
